@@ -1,149 +1,201 @@
-// Game Constants & Variables
-let inputDir = {x: 0, y: 0}; 
-const foodSound = new Audio('music/food.mp3');
-const gameOverSound = new Audio('music/gameover.mp3');
-const moveSound = new Audio('music/move.mp3');
-const musicSound = new Audio('music/music.mp3');
-let speed = 19;
-let score = 0;
-let lastPaintTime = 0;
-let snakeArr = [
-    {x: 13, y: 15}
-];
+$(document).ready(function() {
 
-food = {x: 6, y: 7};
 
-// Game Functions
-function main(ctime) {
-    window.requestAnimationFrame(main);
-    // console.log(ctime)
-    if((ctime - lastPaintTime)/1000 < 1/speed){
-        return;
-    }
-    lastPaintTime = ctime;
-    gameEngine();
-}
+	var box = $(".box"),
+		orginal = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17],
+		temp = orginal,
+		x = [],
+		sec = 0,
+		date1,date2,
+		moves = 0,
+		mm = 0,
+		ss = 0,
+		upIMG,
+		images = ["https://preview.ibb.co/kMdsfm/kfp.png","https://preview.ibb.co/kWOEt6/minion.png","https://preview.ibb.co/e0Rv0m/ab.jpg"]
+		img = 0;
 
-function isCollide(snake) {
-    // If you bump into yourself 
-    for (let i = 1; i < snakeArr.length; i++) {
-        if(snake[i].x === snake[0].x && snake[i].y === snake[0].y){
-            return true;
-        }
-    }
-    // If you bump into the wall
-    if(snake[0].x >= 18 || snake[0].x <=0 || snake[0].y >= 18 || snake[0].y <=0){
-        return true;
-    }
-        
-    return false;
-}
 
-function gameEngine(){
-    // Part 1: Updating the snake array & Food
-    if(isCollide(snakeArr)){
-        gameOverSound.play();
-        musicSound.pause();
-        inputDir =  {x: 0, y: 0}; 
-        alert("Game Over. Press any key to play again!");
-        snakeArr = [{x: 13, y: 15}];
-        musicSound.play();
-        score = 0; 
-    }
 
-    // If you have eaten the food, increment the score and regenerate the food
-    if(snakeArr[0].y === food.y && snakeArr[0].x ===food.x){
-        foodSound.play();
-        score += 1;
-        if(score>hiscoreval){
-            hiscoreval = score;
-            localStorage.setItem("hiscore", JSON.stringify(hiscoreval));
-            hiscoreBox.innerHTML = "HiScore: " + hiscoreval;
-        }
-        scoreBox.innerHTML = "Score: " + score;
-        snakeArr.unshift({x: snakeArr[0].x + inputDir.x, y: snakeArr[0].y + inputDir.y});
-        let a = 2;
-        let b = 16;
-        food = {x: Math.round(a + (b-a)* Math.random()), y: Math.round(a + (b-a)* Math.random())}
-    }
 
-    // Moving the snake
-    for (let i = snakeArr.length - 2; i>=0; i--) { 
-        snakeArr[i+1] = {...snakeArr[i]};
-    }
+	$('.me').css({"background-image" : 'url('+images[0]+')'});
 
-    snakeArr[0].x += inputDir.x;
-    snakeArr[0].y += inputDir.y;
+	$(".start").click(function() {
+		$(".start").addClass('prevent_click');
+		$(".start").delay(100).slideUp(500);
+		$(".full").hide();
+		$(".pre_img").addClass("prevent_click");
+		
+		date1 = new Date();
+		Start();
+		return 0;
+	});
 
-    // Part 2: Display the snake and Food
-    // Display the snake
-    board.innerHTML = "";
-    snakeArr.forEach((e, index)=>{
-        snakeElement = document.createElement('div');
-        snakeElement.style.gridRowStart = e.y;
-        snakeElement.style.gridColumnStart = e.x;
+	function Start() {
+		randomTile();
+		changeBG(img);
+		var count = 0,
+			a,
+			b,
+			A,
+			B;
+		$(".me").click(function() {
+			count++;
+			if (count == 1) {
+				a = $(this).attr("data-bid");
+				$('.me_'+a).css({"opacity": ".65"});
+			} else {
+				b = $(this).attr("data-bid");	
+				$('.me_'+a).css({"opacity": "1"});
+				if (a == b) {
+				} else {
+					$(".me_" + a)
+						.addClass("me_" + b)
+						.removeClass("me_" + a);
+					$(this)
+						.addClass("me_" + a)
+						.removeClass("me_" + b);
+					$(".me_" + a).attr("data-bid", a);
+					$(".me_" + b).attr("data-bid", b);
+				}
+				moves++;
+				swapping(a, b);
+				checkCorrect(a);
+				checkCorrect(b);
+				a = b = count = A = B = 0;
+			}
+			if (arraysEqual(x)) { 
+				date2 = new Date();
+				timeDifferece();
+				showScore();
+				return 0;
+			}
+		});
+		return 0;
+	}
 
-        if(index === 0){
-            snakeElement.classList.add('head');
-        }
-        else{
-            snakeElement.classList.add('snake');
-        }
-        board.appendChild(snakeElement);
+	function randomTile() {
+		var i;
+		for (i = orginal.length-1; i >= 0; i--) {
+			var flag = getRandom(0, i);
+			x[i] = temp[flag];
+			temp[flag] = temp[i];
+			temp[i] = x[i];
+		}
+		for (i = 0; i < orginal.length; i++) {
+			box.append(
+				'<div  class="me me_' + x[i] + ' tile" data-bid="' + x[i] + '"></div>'
+			);
+			if ((i + 1) % 6 == 0) box.append("<br>");
+		}
+		i = 17;
+		return 0;
+	}
+
+	function arraysEqual(arr) {
+		var i;
+		for (i = orginal.length - 1; i >= 0; i--) {
+			if (arr[i] != i) return false;
+		}
+		return true;
+	}
+
+	function checkCorrect(N1) {
+		var pos = x.indexOf(parseInt(N1, 10));
+		if (pos != N1) {
+			return;
+		}
+		$(".me_" + N1).addClass("correct , prevent_click ");
+		return;
+	}
+
+	function swapping(N1, N2) {
+		var first = x.indexOf(parseInt(N1, 10)),
+			second = x.indexOf(parseInt(N2, 10));
+		x[first] = parseInt(N2, 10);
+		x[second] = parseInt(N1, 10);
+		return 0;
+	}
+	
+	function getRandom(min, max) {
+			return Math.floor(Math.random() * (max - min + 1)) + min;
+		}
+	
+	function timeDifferece(){
+		var diff = date2 - date1;
+		var msec = diff;
+		var hh = Math.floor(msec / 1000 / 60 / 60);
+		msec -= hh * 1000 * 60 * 60;
+	 	mm = Math.floor(msec / 1000 / 60); // Gives Minute
+		msec -= mm * 1000 * 60;
+		ss = Math.floor(msec / 1000);		// Gives Second
+		msec -= ss * 1000;
+		return 0;
+	}
+
+
+	function changeBG(img){	
+		if(img != 3){
+		$('.me').css({
+			"background-image" : "url("+images[img]+")"
+		});
+		return
+		}
+		else
+			$('.me').css({"background-image" : "url("+upIMG+")"});
+	}
+
+	$('.pre_img li').hover(function(){
+			img = $(this).attr("data-bid");
+			changeBG(img);
+
+		});
+	
+	function showScore(){
+		$('#min').html(mm);
+		$('#sec').html(ss);
+		$('#moves').html(moves);
+		setTimeout(function(){
+		$('.cover').slideDown(350);
+		},1050);
+		return 0;
+	}
+
+	$('.OK').click(function(){
+		$('.cover').slideUp(350);
+	});
+
+	$('.reset').click(function(){
+		$(".tile").remove();
+		$("br").remove();
+		$(".full").show();
+		$(".start").show();
+		$(".pre_img, .start").removeClass("prevent_click");
+		
+		temp = orginal;
+		x = [];
+		moves =  ss = mm = 0;
+		return 0;
+	});
+
+	$("#upfile1").click(function () {
+ 	   $("#file1").trigger('click');
+	});
+
+	$("#file1").change(function(){
+        readURL(this);
     });
-    // Display the food
-    foodElement = document.createElement('div');
-    foodElement.style.gridRowStart = food.y;
-    foodElement.style.gridColumnStart = food.x;
-    foodElement.classList.add('food')
-    board.appendChild(foodElement);
 
+     function readURL(input) {
+        if (input.files && input.files[0]) {
+            var reader = new FileReader();
+            
+            reader.onload = function (e) {
+               upIMG =  e.target.result;
+               img = 3;
+               changeBG(3);
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
 
-}
-
-
-// Main logic starts here
-musicSound.play();
-let hiscore = localStorage.getItem("hiscore");
-if(hiscore === null){
-    hiscoreval = 0;
-    localStorage.setItem("hiscore", JSON.stringify(hiscoreval))
-}
-else{
-    hiscoreval = JSON.parse(hiscore);
-    hiscoreBox.innerHTML = "HiScore: " + hiscore;
-}
-
-window.requestAnimationFrame(main);
-window.addEventListener('keydown', e =>{
-    inputDir = {x: 0, y: 1} // Start the game
-    moveSound.play();
-    switch (e.key) {
-        case "ArrowUp":
-            console.log("ArrowUp");
-            inputDir.x = 0;
-            inputDir.y = -1;
-            break;
-
-        case "ArrowDown":
-            console.log("ArrowDown");
-            inputDir.x = 0;
-            inputDir.y = 1;
-            break;
-
-        case "ArrowLeft":
-            console.log("ArrowLeft");
-            inputDir.x = -1;
-            inputDir.y = 0;
-            break;
-
-        case "ArrowRight":
-            console.log("ArrowRight");
-            inputDir.x = 1;
-            inputDir.y = 0;
-            break;
-        default:
-            break;
     }
-
 });
