@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" id="tree" class="rose" style="touch-action: none">
+<head>
+    <meta name="viewport" content="width-device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no" />
+
+    <style>
+        @font-face {
+            font-family: proximanova;
+            src: url(proximanova-reg-webfont.ttf) format("truetype");
+        }
+        @font-face{
+            font-family: proximanovabold;
+            src: url(proximanova-bold-webfont.ttf) format("truetype");
+        }
+
+        /* covers :fullscreen */
+        body{
+            font-family: proximanova;
+            margin: 0px;
+            background-color: black;
+        }
+
+        main{
+            max-width:600px;
+            height:100vh;
+            background-image: url("img/backa.jpg");
+            background-size: 100% 99%;
+            margin:auto;
+            position: relative;
+        }
+
+        .header{
+            height: 20vh;
+        }
+
+        .header img{
+            float: right;
+            height: 95%;
+        }
+
+        .button{
+            background-image: url("img/button_2.png");
+            background-size: 100% 100%;
+            cursor: pointer;
+            width: 125px;
+            height: 55px;
+            position: absolute;
+            top: 85%;
+            left: 50%;
+        }
+
+        .button p{
+            margin: 0;
+            padding: 5px;
+            text-align: center;
+            font-size: 25px;
+        }
+
+        @media only screen and (max-width: 700px) {
+                .header {
+                    height: 10vh;
+                }
+
+                main {
+                    height: 85vh;
+                }
+
+                .button {
+                    left: 30%;
+                }
+            }
+    </style>
+</head>
+<body>
+    <main>
+        <!-- <div class="header">
+            <img src="img/flow.jpg">
+        </div> -->
+        <div class="header">
+            <img src="img/logo.gif">
+        </div>
+        <div onclick="window.location.href='main.html'" class="button">
+        </div>
+    </main>
+</body>
+
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" id="tree" class="rose" style="touch-action: none">
+<head>
+    <title>Welcome to the game</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="puzz.css"/>
+  <title>SnakeMania - Ek Gaming Katha</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script  type="text/javascript">
+</script>
+  
+  <style>
+              @font-face{
+            font-family: proximanovabold;
+            src: url(proximanova-bold-webfont.ttf) format("truetype");
+        }
+
+        
+        @font-face{
+            font-family: proximanovabold;
+            src: url(proximanova-bold-webfont.ttf) format("truetype");
+        }
+
+        .d-none{
+            display: none !important;
+        }
+
+        .modal-backdrop{
+            width:100%;
+            height:100%;
+            position:fixed;
+            left:0;
+            top:0;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:100;
+            background-color:rgba(0,0,0,0.4);
+        }
+        .modal-content{
+            width:95%;
+            max-width:400px;
+            height:auto;
+            background-color:black;
+            border-radius:8px;
+            padding:20px;
+            text-align:center;
+            justify-content:center;
+            font-size:16px;
+            font-family:proximanova;
+            color: rgb(14, 13, 13);
+        }
+        .modal-button{
+            display:inline-block;
+            text-decoration:none;
+            cursor: pointer;
+            background-image: url("img/button.png");
+            background-size: 100% 100%;
+            color:black;
+            width: 150px;
+            height: 40px;
+            margin: auto;
+            margin-top: 15px;
+        }
+        
+        /* Changes occured full screen */
+        .play-backdrop{
+            width:100%;
+            height:100%;
+            position:fixed;
+            left:0;
+            top: 2px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            z-index:100;
+            background-color:rgba(136, 235, 123, 0.4);
+        }
+
+        .play-content{
+            width:95%;
+            max-width:300px;
+            height:auto;
+            background-color: black;
+            border-radius:8px;
+            padding:20px;
+            text-align:center;
+            justify-content:center;
+            font-size:16px;
+            font-family:proximanova;
+            color: white;
+        }
+
+        .play-button{
+            display:inline-block;
+            cursor:pointer;
+            background-size: 100% 100%;
+            color: yellow;
+            width: 150px;
+            height: 40px;
+            margin: auto;
+            margin-top: 15px;
+        }
+
+        .header{
+            height: 15vh;
+            max-width: 750px;
+            margin: auto;
+            float: right;
+            margin-top: 1%;
+        }
+
+        .header img{
+            float: right;
+            height: 95%;
+        }
+  </style>
+  </head>
+  <body id="body">
+    <div class="body">
+        <div id="scoreBox">Score: 0</div>
+        <div id="hiscoreBox">HiScore: 0</div>
+        <div id="board"></div>
+      <!-- <audio id="bg_music" loop>
+          <source src="bgmusic.mpeg" type="audio/mpeg">
+      </audio>
+      <audio id="place_music">
+          <source src="place.mp3" type="audio/mpeg">
+      </audio>
+      <audio>
+          <source src="end.wav" type="audio/wav">
+      </audio> -->
+      <!-- <div class="header">
+          <img src="img/gun1.jpg"/>
+      </div> -->
+      <!-- <div class='back'>
+          <img src="img/backb.jpg"/>
+      </div> -->
+      <div class="canvaswrapper" id="canvasparent">
+          <canvas id="canvas" class="canvas"></canvas>
+        </div>
+
+        <script src="main.js"></script>
+      <div class="modal-backdrop d-none">
+          <div class="modal-content">
+              <h2>Congratulations</h2>
+              <p style="margin: 1em;">You have succe!!!</p>
+          </div>
+      </div>
+  </body>
+  <div id="puzzle1pop" class="play-backdrop">
+    <div class="play-content">
+        <p style="margin:1em;">
+            Arrange puzzle pieces to fix this game.
+        </p>
+        <button id="btn1" class="play-button">Start Game</button>
+    </div>
+  </div>
+
+  <div id="puzzle2pop" class="play-backdrop">
+    <div class="play-content">
+        <p style="margin:1em;">
+            Arrange puzzle pieces to fix this.<br><br>
+        </p>
+        <button id="btn2" class="play-button">Start Game</button>
+    </div>
+  </div>
+</body>
+
+    <script>
+        var choice = localStorage.getItem("choice");
+
+        if(choice==0){
+            document.getElementById("puzzle2pop").classList.add('d-none');
+            // document.getElementById('canvas').style.backgroundImage = 'url("img/flower.jpg")';
+            document.getElementById('canvas').style.backgroundSize="100% 100%";
+        }
+        else{
+            document.getElementById("puzzle1pop").classList.add('d-none');
+            // document.getElementById("canvas").style.backgroundImage = 'url("img/gun2.png")';
+            document.getElementById('canvas').style.backgroundSize="100% 100%";
+        }
+
+        // var playButton1 = document.getElementById('btn1');
+        // playButton1.addEventListener('click',function(){
+        //     var gameState = localStorage.getItem("gameState");
+        //     if(!(gameState && gameState == "lost")){
+        //         document.getElementById("puzzle1pop").classList.add('d-none');
+        //         // document.getElementById("bg_music").volume=0.05;
+        //         console.log("Window orientation is: landscape");
+        //         localStorage.setItem("time-remaining",120);
+        //         window.setInterval(function(){
+        //             var time = parseInt(localStorage.getItem("time-remaining"));
+        //             time = time - 1;
+        //             localStorage.setItem("time-remaining",time);
+        //         },1000);
+        //     } else if(gameState && gameState == "won"){
+        //         document.getElementById('puzzle1pop').classList.add('d-none');
+        //         document.querySelector('.modal-backdrop').classList.remove('d-none');
+        //     }
+        // })
+
+        var playButton2 = document.getElementById('btn2');
+    playButton2.addEventListener('click', function(){
+        var gamestate = localStorage.getItem("gameState");
+        if(!(gamestate && gamestate == "lost")){
+            if(window.innerHeight < window.innerWidth){ //landscape mode
+                document.getElementById('puzzle2pop').classList.add('d-none');
+                // document.getElementById("bg_music").volume = 0.05;
+                //document.getElementById("bg_music").play();
+                console.log("window orientation is: landscape");
+                localStorage.setItem("time-remaining",120);
+                window.setInterval(function(){
+                    var time = parseInt(localStorage.getItem("time-remaining"));
+                    time = time-1;
+                    localStorage.setItem("time-remaining",time);
+                    //console.log("time remaining is: "+localStorage.getItem("time-remaining"));
+                },1000);
+            } else{
+                console.log("window orientation is: portrait");
+            }
+        } else if(gamestate && gamestate == "won"){
+            document.getElementById('puzzle2pop').classList.add('d-none');
+            document.querySelector('.modal-backdrop').classList.remove('d-none')
+        }
+    });
+    </script>
+
+    
+
+  </html>
+    
